@@ -3,6 +3,9 @@ package com.example.demo;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity(name = "Student")
 @Table(
@@ -43,6 +46,19 @@ public class Student {
     private String email;
     @Column(name = "age", nullable = false)
     private Integer age;
+
+    @OneToOne(
+            mappedBy = "student",
+            orphanRemoval = true
+    )
+    private StudentIdCard studentIdCard;
+
+    @OneToMany(
+            mappedBy = "student",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST ,CascadeType.REMOVE}
+    )
+    private List<Book> books = new ArrayList<>();
 
     public Student(String firstName, String lastName, String email, Integer age) {
         this.firstName = firstName;
@@ -93,6 +109,7 @@ public class Student {
         this.email = email;
     }
 
+
     @Override
     public String toString() {
         return "Student{" +
@@ -105,5 +122,19 @@ public class Student {
     }
 
     public Student() {
+    }
+
+    public void addBook(Book book){
+        if (!this.books.contains(book)){
+            this.books.add(book);
+            book.setStudent(this);
+        }
+    }
+
+    public void removeBook(Book book){
+        if(this.books.contains(book)){
+            this.books.remove(book);
+            book.setStudent(null);
+        }
     }
 }

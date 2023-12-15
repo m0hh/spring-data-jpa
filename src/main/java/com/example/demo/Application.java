@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootApplication
@@ -19,7 +20,9 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(StudentRepository studentRepository, StudentIdCardRepository studentIdCardRepository) {
+    CommandLineRunner commandLineRunner(StudentRepository studentRepository,
+                                        StudentIdCardRepository studentIdCardRepository,
+                                        BookRepository bookRepository) {
         return args -> {
 //            Student maria = new Student("Maria","Jones","maria@gmail.com",18 );
 //            Student maria2 = new Student("Maria","Jones","maria2@gmail.com",21 );
@@ -74,12 +77,26 @@ public class Application {
                     email,
                     faker.number().numberBetween(17,55)
             );
+            student.addBook(new Book("Clean Code", LocalDateTime.now().minusDays(4)));
+            student.addBook(new Book("Think and Grow Rich", LocalDateTime.now()));
+            student.addBook(new Book("Spring Data Jpa", LocalDateTime.now().minusYears(1)));
 
             StudentIdCard studentIdCard = new StudentIdCard("12345689", student);
             studentIdCardRepository.save(studentIdCard);
+            studentRepository.findAll().forEach(System.out::println);
+
+//            studentRepository.findById(1L).ifPresent(System.out::println);
+//            studentIdCardRepository.findById(1L).ifPresent(System.out::println);
+
+            //studentRepository.deleteById(1L);
+
+
+//            Book book = new Book(student, LocalDateTime.now(),"Harry Potter and The Chamber of secrets");
+//            bookRepository.save(book);
+//            bookRepository.findAll().forEach(System.out::println);
+
 
         };
-        // 37
     }
 
 //    private static void sorting(StudentRepository studentRepository) {
