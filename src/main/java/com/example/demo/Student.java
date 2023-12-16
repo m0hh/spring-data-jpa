@@ -49,16 +49,35 @@ public class Student {
 
     @OneToOne(
             mappedBy = "student",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST,CascadeType.REMOVE}
     )
     private StudentIdCard studentIdCard;
 
     @OneToMany(
             mappedBy = "student",
             orphanRemoval = true,
-            cascade = {CascadeType.PERSIST ,CascadeType.REMOVE}
-    )
+            cascade = {CascadeType.PERSIST ,CascadeType.REMOVE},
+            fetch = FetchType.EAGER
+  )
     private List<Book> books = new ArrayList<>();
+
+    @OneToMany(
+            cascade = {CascadeType.PERSIST ,CascadeType.REMOVE},
+            mappedBy = "student"
+    )
+//    @JoinTable(
+//            name = "enrollment",
+//            joinColumns = @JoinColumn(
+//                    name = "student_id",
+//                    foreignKey =  @ForeignKey(name = "enrolment_student_fk")
+//            ),
+//            inverseJoinColumns = @JoinColumn(
+//                    name = "course_id",
+//                    foreignKey =  @ForeignKey(name = "enrolment_course_fk")
+//            )
+//    )
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     public Student(String firstName, String lastName, String email, Integer age) {
         this.firstName = firstName;
@@ -136,5 +155,31 @@ public class Student {
             this.books.remove(book);
             book.setStudent(null);
         }
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setStudentIdCard(StudentIdCard studentIdCard) {
+        this.studentIdCard = studentIdCard;
+    }
+
+    public StudentIdCard getStudentIdCard() {
+        return studentIdCard;
+    }
+
+    public List<Enrollment> getEnrollments() {
+        return enrollments;
+    }
+
+    public void addEnrollment(Enrollment enrollment){
+        if (!enrollments.contains(enrollment)){
+            enrollments.add(enrollment);
+        }
+    }
+
+    public void removeEnrollment(Enrollment enrollment){
+        enrollments.remove(enrollment);
     }
 }

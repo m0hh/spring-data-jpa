@@ -82,8 +82,36 @@ public class Application {
             student.addBook(new Book("Spring Data Jpa", LocalDateTime.now().minusYears(1)));
 
             StudentIdCard studentIdCard = new StudentIdCard("12345689", student);
-            studentIdCardRepository.save(studentIdCard);
-            studentRepository.findAll().forEach(System.out::println);
+//            studentIdCardRepository.save(studentIdCard);
+            student.setStudentIdCard(studentIdCard);
+//            student.enrollToCourse(new Course("Computer Science", "IT"));
+//            student.enrollToCourse(new Course("Data Base", "IT"));
+            student.addEnrollment(new Enrollment(
+                    new EnrollmentId(1L,1L),
+                    student,
+                    new Course("Computer Science", "IT"),
+                    LocalDateTime.now()
+            ));
+            student.addEnrollment(new Enrollment(
+                    new EnrollmentId(1L,2L),
+                    student,
+                    new Course("Data Base", "IT"),
+                    LocalDateTime.now().minusDays(18))
+            );
+            studentRepository.save(student);
+            studentRepository.findById(1L).ifPresent(student1 -> {
+                        System.out.println(student1);
+                        System.out.println(student1.getStudentIdCard());
+                        for (Book book: student1.getBooks()){
+                            System.out.println(book);
+                        }
+//                        System.out.println("fetch books lazy...");
+//                        List<Book> books = student.getBooks();
+//                        books.forEach(book -> {
+//                            System.out.println(student1.getFirstName() + " borrowed " + book.getBookName());
+//                        });
+                    }
+            );
 
 //            studentRepository.findById(1L).ifPresent(System.out::println);
 //            studentIdCardRepository.findById(1L).ifPresent(System.out::println);
